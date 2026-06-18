@@ -1,0 +1,26 @@
+# Python bytecode (compiled files)
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual Environment (exclude dependencies)
+venv/
+.venv/
+env/
+ENV/
+
+# Flask local configuration & instance folder
+instance/
+.webassets-cache
+
+# Environment variables (secret keys, API tokens)
+.env
+.flaskenv
+
+# Databases
+*.db
+*.sqlite3
+
+# IDEs and editors
+.vscode/
+.idea/
