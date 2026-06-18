@@ -1,0 +1,39 @@
+# --- Flask Specifics ---
+instance/
+.webassets-cache
+.env
+*.env
+
+# --- Python Environments & Caches ---
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+ENV/
+env/
+
+# --- Databases (Flask-SQLAlchemy, etc.) ---
+*.db
+*.sqlite
+*.sqlite3
+
+# --- Testing & Coverage ---
+.pytest_cache/
+.coverage
+htmlcov/
+.hypothesis/
+
+# --- IDEs and Editors ---
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.swp
+
+# --- OS Specific ---
+.DS_Store
+Thumbs.db
+
