@@ -16,61 +16,7 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
    <script>
-  // Wrap in DOMContentLoaded so the code runs AFTER the elements load
-  //document.addEventListener('DOMContentLoaded', () => {
-   // const catLabels = {{(cat_labels or []) | tojson}};
-   // const catValues = {{(cat_values or []) | tojson}};
-
-  //  if (document.getElementById('catChart')) {
-    //  const catCtx = document.getElementById('catChart').getContext('2d'); // Added semicolon
-     /*
-      new Chart(catCtx, {
-        type: 'pie',
-        data: {
-          labels: catLabels,
-          datasets: [{ data: catValues }]
-        },
-        options: {
-          plugins: {
-            legend: {
-              labels: { color: '#cbd5e1' }
-            }
-          }
-        }
-      });
-      */
-   /*
-      new Chart(catCtx, {
-        type: 'pie',
-        data: {
-          labels: catLabels,
-          datasets: [{ 
-            data: catValues,
-            // Explicit colors so the chart doesn't render completely gray/blank
-            backgroundColor: [
-              'rgba(56, 189, 248, 0.2)', // brand blue
-              'rgba(16, 185, 129, 0.2)', // emerald green
-              'rgba(245, 158, 11, 0.2)', // amber yellow
-              'rgba(239, 68, 68, 0.2)'   // rose red
-            ],
-            borderColor: ['#38bdf8', '#10b981', '#f59e0b', '#ef4444'],
-            borderWidth: 1
-          }]
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false, // Prevents the canvas from ballooning out of size
-          plugins: {
-            legend: {
-              labels: { color: '#cbd5e1' }
-            }
-          }
-        }
-      });
-      */
-  //  } // Closed the IF block
- // }); // Closed the DOMContentLoaded listener
-</script>
+ </script>
   </head>
   <body class="h-full bg-slate-900 text-slate-100">
     <main class="mx-auto max-w-6xl px-4 py-8">
@@ -210,7 +156,7 @@
       <div class="mb-3 mt-6">
         <span class="text-sm text-slate-300 mr-2">Total:</span>
         <span class="inline-block rounded-xl border border-slate-700 bg-slate-800 px-3 py-1 font-semibold">
-          ${{ "%.2f"|format(total) }}
+          ${{ "%.2f"|format(total or 0) }}
         </span>
       </div>
 
@@ -238,6 +184,12 @@
                 <td class="px-4 py-2">{{ expense.category }}</td>
                 <td class="px-4 py-2 text-right">${{ "%.2f"|format(expense.amount) }}</td>
                 <td class="px-4 py-2 text-right">
+
+
+                  <div class="inline-flex gap-2">
+                    <a class="text-sky-300 hover:text-sky-200 text-xs border border-sky-400/30 px-3 py-1 rounded-lg" href="{{url_for('edit', expense_id=expense.id) }}">EDIT</a>
+                  </div>
+                  
                   <!-- FIXED: Repaired broken input tags and wired delete button controls safely -->
                   <form
                    method="post"

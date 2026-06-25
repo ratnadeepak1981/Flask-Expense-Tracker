@@ -1,7 +1,7 @@
 from flask import Flask, render_template, redirect, url_for, Response,request, make_response,flash
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import func 
-from datetime import datetime,date
+from datetime import datetime,date as dt_date
 
 app = Flask(__name__)
 
@@ -22,7 +22,7 @@ class Expense(db.Model):
     description = db.Column(db.String(120), nullable=False)
     amount = db.Column(db.Float, nullable=False)
     category = db.Column(db.String(50), nullable=False)
-    date = db. Column(db.Date, nullable=False, default=date.today)    
+    date = db.Column(db.Date, nullable=False, default=dt_date.today) 
     
 def parse_date_or_none(s: str):
     if not s:
@@ -104,7 +104,7 @@ def index():
     print(expenses)
     return render_template("index.html", expenses=expenses,
                                          categories=CATEGORIES,
-                                         today=date.today().isoformat(),
+                                         today=dt_date.today().isoformat(),
                                          total=total,
                                          start_str=start_str,
                                          end_str=end_str,
@@ -134,7 +134,6 @@ def add():
         return redirect(url_for("index"))
 
     try:
-
         amount = float(amount_str)
         if amount <= 0:
             raise ValueError
@@ -144,9 +143,9 @@ def add():
         return redirect(url_for("index"))    
 
     try:
-        d = datetime. strptime(date_str, "%Y-m-sd") .date() if date_str else date. today()
+        d = datetime. strptime(date_str, "%Y-m-sd") .date() if date_str else date.today()
     except ValueError:
-        d = date.today()
+        d = dt_date.today()
 
         e = Expense(description=description, amount=amount, category=category, date=d)
         db.session.add(e)
@@ -155,13 +154,65 @@ def add():
         flash("Expense added", "success")
         return redirect(url_for("index"))  
 
+
+
+
 @app. route('/delete/<int:expense_id>' ,methods=['POST' ] )
 def delete(expense_id):
     e = Expense.query.get_or_404(expense_id)
     db.session.delete(e)
     db.session.commit()
     flash("Expense deleted", "success")
+    return redirect(url_for("index"))  
+
+
+
+
+@app. route('/edit/<int:expense_id>' ,methods=['GET'])
+def edit(expense_id):
+     e = db.get_or_404(Expense, expense_id)
+     return render_template("edit.html", expense=e, categories=CATEGORIES, today=dt_date. today().isoformat())   
+
+
+
+@app. route('/edit/<int:expense_id>',methods=['POST' ])
+def edit_post(expense_id):
+    e = Expense.query.get_or_404(expense_id)
+
+    description = (request.form.get("description") or "").strip()
+    amount_str = (request. form.get("amount") or "").strip()
+    category = (request. form.get("category") or "").strip()
+    date_str = (request. form.get("date") or "").strip()
+
+    print(request.form)     
+
+    if not description or not amount_str or not category:
+        flash("Please fill description, amount, and category", "error")
+        return redirect(url_for("edit", expense_id=expense_id))
+
+    try:
+        amount = float(amount_str)
+        if amount <= 0:
+            raise ValueError
+    except ValueError:
+        flash("Amount must be a positive number", "error")
+        return redirect(url_for("edit", expense_id=expense_id))
+
+    try:
+        d = datetime.strptime(date_str, "%Y-%m-%d").date() if date_str else dt_date.today()
+    except ValueError:
+        d = dt_date. today()
+
+    e.description = description
+    e. amount = amount
+    e.category = category
+    e.date = d
+
+    db.session.commit()
+    flash("Expense updated", "success")
     return redirect(url_for("index"))    
+
+
 
 
 @app.route("/export")
@@ -196,16 +247,6 @@ def export_csv():
     filename = f"expenses_{fname_start}_to_{fname_end}.csv"
 
     return Response(csv_data, headers={"Content-Type": "text/csv", "Content-Disposition": f"attachment; filename={filename}"})
-
-
-    #return Response 
-    #(
-     #   csv_data,
-     #   headers:={
-     #       "Content-Type": "text/csv",
-     #       "Content-Disposition": f"attachment; filename={filename}"    
-     #   }
-    #)
 
 if __name__=="__main__":
     app.run(debug=True, port=4848)
